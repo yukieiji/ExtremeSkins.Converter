@@ -1,4 +1,4 @@
-﻿namespace ExtremeSkins.Converter.Core.Compat.TheOtherRoles;
+﻿namespace ExtremeSkins.Converter.Core.TheOtherRoles;
 
 public static class Define
 {
