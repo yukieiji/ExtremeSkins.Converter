@@ -1,4 +1,4 @@
-﻿namespace ExtremeSkins.Converter.Core.NebulaOnTheShip;
+﻿namespace ExtremeSkins.Converter.Core.Analyzer.NebulaOnTheShip;
 
 public static class Define
 {

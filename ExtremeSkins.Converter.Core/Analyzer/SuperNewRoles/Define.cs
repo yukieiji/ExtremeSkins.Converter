@@ -1,4 +1,4 @@
-﻿namespace ExtremeSkins.Converter.Core.SuperNewRoles;
+﻿namespace ExtremeSkins.Converter.Core.Analyzer.SuperNewRoles;
 
 public static class Define
 {
