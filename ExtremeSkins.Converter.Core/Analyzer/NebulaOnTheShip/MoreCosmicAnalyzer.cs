@@ -7,7 +7,12 @@ namespace ExtremeSkins.Converter.Core.Analyzer.NebulaOnTheShip;
 
 public sealed class MoreCosmicAnalyzer : IRepositoryAnalyzer
 {
-    public string TargetPath { get; init; }
+    public string TargetPath { get; }
+
+    public MoreCosmicAnalyzer(string targetPath)
+    {
+        this.TargetPath = targetPath;
+    }
 
     public AnalyzeResult Analyze()
     {

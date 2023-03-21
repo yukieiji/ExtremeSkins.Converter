@@ -2,6 +2,9 @@
 using System.IO;
 using System.Linq;
 
+using ExtremeSkins.Converter.Core.Analyzer.NebulaOnTheShip;
+using ExtremeSkins.Converter.Core.Analyzer.SuperNewRoles;
+using ExtremeSkins.Converter.Core.Analyzer.TheOtherRoles;
 using ExtremeSkins.Converter.Core.Interface;
 
 namespace ExtremeSkins.Converter.Core;
@@ -9,6 +12,13 @@ namespace ExtremeSkins.Converter.Core;
 public static class RepositoryClassifier
 {
     public const string CloneFolder = "clonedRepo";
+
+    private static readonly Type[] analyzerType = new Type[]
+    { 
+        typeof(MoreCosmicAnalyzer),
+        typeof(SuperNewNamePlatesAnalyzer),
+        typeof(TheOtherHatsAnalyzer)
+    };
 
     public static IRepositoryAnalyzer Classify(string targetPath)
     {
@@ -41,7 +51,15 @@ public static class RepositoryClassifier
             throw new ArgumentNullException();
         }
 
-
+        foreach (Type analyzer in analyzerType)
+        {
+            var instanceAnalyzer = (IRepositoryAnalyzer)Activator.CreateInstance(
+                analyzer, targetPath);
+            if (instanceAnalyzer.IsValid())
+            {
+                return instanceAnalyzer;
+            }
+        }
 
         throw new Exception();
     }

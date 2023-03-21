@@ -7,7 +7,12 @@ namespace ExtremeSkins.Converter.Core.Analyzer.SuperNewRoles;
 
 public sealed class SuperNewNamePlatesAnalyzer : IRepositoryAnalyzer
 {
-    public string TargetPath { get; init; }
+    public string TargetPath { get; }
+
+    public SuperNewNamePlatesAnalyzer(string targetPath)
+    {
+        this.TargetPath = targetPath;
+    }
 
     public AnalyzeResult Analyze()
     {

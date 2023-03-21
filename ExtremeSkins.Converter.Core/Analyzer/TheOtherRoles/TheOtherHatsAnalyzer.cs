@@ -7,7 +7,12 @@ namespace ExtremeSkins.Converter.Core.Analyzer.TheOtherRoles;
 
 public sealed class TheOtherHatsAnalyzer : IRepositoryAnalyzer
 {
-    public string TargetPath { get; init; }
+    public string TargetPath { get; }
+
+    public TheOtherHatsAnalyzer(string targetPath)
+    {
+        this.TargetPath = targetPath;
+    }
 
     public AnalyzeResult Analyze()
     {
