@@ -10,7 +10,7 @@ public static class RepositoryClassifier
 {
     public const string CloneFolder = "clonedRepo";
 
-    public static IRepositoryConverter Classify(string targetPath)
+    public static IRepositoryAnalyzer Classify(string targetPath)
     {
         if (string.IsNullOrEmpty(targetPath))
         {

@@ -1,8 +1,8 @@
 ﻿namespace ExtremeSkins.Converter.Core.Interface;
 
-public interface IRepositoryConverter
+public interface IRepositoryAnalyzer
 {
     public bool IsValid();
 
-    public ConvertResult Convert();
+    public AnalyzeResult Analyze();
 }

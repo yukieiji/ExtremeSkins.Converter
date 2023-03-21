@@ -1,5 +1,5 @@
 ﻿namespace ExtremeSkins.Converter.Core;
 
-public sealed class ConvertResult
+public sealed class AnalyzeResult
 {
 }
