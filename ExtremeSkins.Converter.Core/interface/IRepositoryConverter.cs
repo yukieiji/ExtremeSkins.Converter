@@ -2,4 +2,7 @@
 
 public interface IRepositoryConverter
 {
+    public bool IsValid();
+
+    public ConvertResult Convert();
 }
