@@ -5,11 +5,15 @@ using ExtremeSkins.Converter.Core;
 using ExtremeSkins.Converter.Core.Analyzer;
 using ExtremeSkins.Converter.Core.Interface;
 
+using ExtremeHatDataStruct = ExtremeSkins.Core.ExtremeHats.DataStructure;
+using ExtremeVisorDataStruct = ExtremeSkins.Core.ExtremeVisor.DataStructure;
+using ExtremeNamePlateDataStruct = ExtremeSkins.Core.ExtremeNamePlate.DataStructure;
+
 namespace ExtremeSkins.Converter.Model;
 
 internal class ConverterModel
 {
-    public IEnumerator<string> Convert(
+    public IEnumerable<string> Convert(
         string outPath, string targetRepo)
     {
         IRepositoryAnalyzer analyzer;
@@ -27,12 +31,28 @@ internal class ConverterModel
 
         AnalyzeResult result = analyzer.Analyze();
 
-        yield return ExecuteConvert(outPath, result.Hat);
-        yield return ExecuteConvert(outPath, result.Visor);
-        yield return ExecuteConvert(outPath, result.NamePlate);
+        foreach (string log in ExecuteConvert(
+            Path.Combine(outPath, ExtremeHatDataStruct.FolderName), result.Hat))
+        {
+            yield return log;
+        }
+
+        foreach (string log in ExecuteConvert(
+            Path.Combine(outPath, ExtremeVisorDataStruct.FolderName), result.Visor))
+        {
+            yield return log;
+        }
+
+        foreach (string log in ExecuteConvert(
+            Path.Combine(outPath, ExtremeNamePlateDataStruct.FolderName), result.NamePlate))
+        {
+            yield return log;
+        }
+
+        yield return $" ---- END ----";
     }
 
-    private IEnumerator<string> ExecuteConvert<T>(string outputPath, List<T> converterList) 
+    private IEnumerable<string> ExecuteConvert<T>(string outputPath, List<T> converterList) 
         where T : ICosmicConverter
     {
         if (converterList.Count <= 0)
@@ -49,6 +69,7 @@ internal class ConverterModel
 
         foreach (var converter in converterList)
         {
+            yield return $"--- Converting.... Auther:{converter.Name} Name:{converter.Name}  ---";
             converter.Convert(outputPath);
         }
     }
