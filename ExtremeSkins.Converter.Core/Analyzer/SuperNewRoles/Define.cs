@@ -17,7 +17,7 @@ public static class Define
     public const string HatBackImgKey = "backresource";
     public const string HatBackFlipImgKey = "backflipresource";
     public const string HatClimbImgKey = "climbresource";
-    public const string HatAdaptiveEKey = "adaptive";
+    public const string HatAdaptiveKey = "adaptive";
     public const string HatBounceKey = "bounce";
     /*
      * "hats": [
