@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using ExtremeSkins.Converter.Service.Interface;
-
-namespace ExtremeSkins.Converter.Service;
+﻿namespace ExtremeSkins.Converter.Service;
 
 public sealed class OpenExplorerService
 {
