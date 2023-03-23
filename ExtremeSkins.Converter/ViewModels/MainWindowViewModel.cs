@@ -14,7 +14,7 @@ public class MainWindowViewModel : BindableBase
     public string Title => "ExtremeSkins.Converter";
 
     public ObservableCollection<string> TargetRepository { get; private set; }
-    public DelegateCommand SetRepositoryCommand { get; private set; }
+    public DelegateCommand<string> SetRepositoryCommand { get; private set; }
 
     private readonly IOokiiDialogService<
         FolderSelectDialogService.Setting,
@@ -26,19 +26,34 @@ public class MainWindowViewModel : BindableBase
             FolderSelectDialogService.Result> openFolderSelectService)
     {
         this.openFolderSelectDlgService = openFolderSelectService;
-        this.SetRepositoryCommand = new DelegateCommand(SetRepository);
+        this.SetRepositoryCommand = new DelegateCommand<string>(SetRepository);
         this.TargetRepository = new ObservableCollection<string>();
     }
-    private void SetRepository()
+    private void SetRepository(string type)
     {
-        var result = openFolderSelectDlgService.Show(
-            new FolderSelectDialogService.Setting()
-            {
-                Tilte = "SelectRepositoryFolder"
-            });
 
-        if (result.State != IOokiiDialogResult.ShowState.Ok) { return; }
+        switch (type)
+        {
+            case "folder":
+                var result = openFolderSelectDlgService.Show(
+                    new FolderSelectDialogService.Setting()
+                    {
+                        Tilte = "SelectRepositoryFolder"
+                    });
 
-        this.TargetRepository.Add(result.FolderPath);
+                if (result.State != IOokiiDialogResult.ShowState.Ok) { return; }
+
+                this.TargetRepository.Add(result.FolderPath);
+                break;
+            case "url":
+                string url = Microsoft.VisualBasic.Interaction.InputBox(
+                    "setUrl", "setUrl");
+                if (string.IsNullOrEmpty(url)) { return; }
+
+                this.TargetRepository.Add(url);
+                break;
+            default:
+                break;
+        }
     }
 }
