@@ -24,6 +24,7 @@ namespace ExtremeSkins.Converter
                 IOokiiDialogService<
                     FolderSelectDialogService.Setting,
                     FolderSelectDialogService.Result>, FolderSelectDialogService>();
+            containerRegistry.RegisterSingleton<OpenExplorerService, OpenExplorerService>();
         }
     }
 }
