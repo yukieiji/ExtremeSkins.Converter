@@ -19,18 +19,14 @@ public class MainWindowViewModel : BindableBase
     public DelegateCommand ConvertCommand { get; private set; }
     public DelegateCommand OpenExportedFolderCommand { get; private set; }
 
-    private readonly IOokiiDialogService<
-        FolderSelectDialogService.Setting,
-        FolderSelectDialogService.Result> openFolderSelectDlgService;
+    private readonly FolderSelectDialogService openFolderSelectDlgService;
     private readonly OpenExplorerService openExplorerService;
 
     private bool isConverting = false;
     private const string outputDir = "output";
 
     public MainWindowViewModel(
-        IOokiiDialogService<
-            FolderSelectDialogService.Setting,
-            FolderSelectDialogService.Result> openFolderSelectService,
+        FolderSelectDialogService openFolderSelectService,
         OpenExplorerService openExplorerService)
     {
         this.openFolderSelectDlgService = openFolderSelectService;

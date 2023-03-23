@@ -13,6 +13,8 @@ namespace ExtremeSkins.Converter.Core.Analyzer.TheOtherRoles;
 
 public sealed class TheOtherHatsAnalyzer : IRepositoryAnalyzer
 {
+    public string Name => "TheOtherHat";
+
     public string TargetPath { get; }
 
     public TheOtherHatsAnalyzer(string targetPath)

@@ -4,7 +4,6 @@ using System.Windows;
 
 using ExtremeSkins.Converter.Views;
 using ExtremeSkins.Converter.Service;
-using ExtremeSkins.Converter.Service.Interface;
 
 namespace ExtremeSkins.Converter
 {
@@ -20,10 +19,7 @@ namespace ExtremeSkins.Converter
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<
-                IOokiiDialogService<
-                    FolderSelectDialogService.Setting,
-                    FolderSelectDialogService.Result>, FolderSelectDialogService>();
+            containerRegistry.RegisterSingleton<FolderSelectDialogService, FolderSelectDialogService>();
             containerRegistry.RegisterSingleton<OpenExplorerService, OpenExplorerService>();
         }
     }

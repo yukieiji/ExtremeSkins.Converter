@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ExtremeSkins.Converter.Core\ExtremeSkins.Converter.Core.csproj" />
     <ProjectReference Include="..\ExtremeSkins.Converter.Service\ExtremeSkins.Converter.Service.csproj" />
   </ItemGroup>
 </Project>

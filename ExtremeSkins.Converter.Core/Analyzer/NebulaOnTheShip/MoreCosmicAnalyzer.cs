@@ -13,6 +13,8 @@ namespace ExtremeSkins.Converter.Core.Analyzer.NebulaOnTheShip;
 
 public sealed class MoreCosmicAnalyzer : IRepositoryAnalyzer
 {
+    public string Name => "MoreCosmic";
+
     public string TargetPath { get; }
 
     public MoreCosmicAnalyzer(string targetPath)

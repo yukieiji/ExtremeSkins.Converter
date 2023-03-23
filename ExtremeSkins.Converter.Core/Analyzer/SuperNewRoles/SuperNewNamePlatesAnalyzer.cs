@@ -12,6 +12,8 @@ namespace ExtremeSkins.Converter.Core.Analyzer.SuperNewRoles;
 
 public sealed class SuperNewNamePlatesAnalyzer : IRepositoryAnalyzer
 {
+    public string Name => "SuperNewNamePlates";
+
     public string TargetPath { get; }
 
     public SuperNewNamePlatesAnalyzer(string targetPath)
