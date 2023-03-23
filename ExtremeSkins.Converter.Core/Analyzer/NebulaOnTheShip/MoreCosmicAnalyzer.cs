@@ -6,6 +6,7 @@ using ExtremeSkins.Converter.Core.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using ExtremeSkins.Converter.Core.Extension;
 using static ExtremeSkins.Converter.Core.Analyzer.NebulaOnTheShip.Define;
 
 namespace ExtremeSkins.Converter.Core.Analyzer.NebulaOnTheShip;
@@ -41,17 +42,17 @@ public sealed class MoreCosmicAnalyzer : IRepositoryAnalyzer
                         Author = hat.Value<string>(HatAuthorKey),
                         Name = hat.Value<string>(HatNameKey),
                         FrontImagePath =
-                            GetImagePathFromJArryField(hat, HatFrontImgKey),
+                            GetImagePathFromJArryField(hat, HatFrontImgKey, HatDataFolder),
                         FrontFlipImagePath =
-                            GetImagePathFromJArryField(hat, HatFrontFlipImgKey),
+                            GetImagePathFromJArryField(hat, HatFrontFlipImgKey, HatDataFolder),
                         BackImagePath =
-                            GetImagePathFromJArryField(hat, HatBackImgKey),
+                            GetImagePathFromJArryField(hat, HatBackImgKey, HatDataFolder),
                         BackFlipImagePath =
-                            GetImagePathFromJArryField(hat, HatBackFlipImgKey),
+                            GetImagePathFromJArryField(hat, HatBackFlipImgKey, HatDataFolder),
                         ClimbImagePath = 
-                            GetImagePathFromJArryField(hat, HatClimbImgKey),
-                        IsBound = hat.Value<bool>(HatBounceKey),
-                        IsShader = hat.Value<bool>(HatAdaptiveKey)
+                            GetImagePathFromJArryField(hat, HatClimbImgKey, HatDataFolder),
+                        IsBound = hat.TryGetValue(HatBounceKey, out bool isHatBound) && isHatBound,
+                        IsShader = hat.TryGetValue(HatAdaptiveKey, out bool isHatShader) && isHatShader,
                     }
                 );
             }
@@ -69,11 +70,13 @@ public sealed class MoreCosmicAnalyzer : IRepositoryAnalyzer
                         Author = visor.Value<string>(VisorAuthorKey),
                         Name = visor.Value<string>(VisorNameKey),
                         IdleImagePath =
-                            GetImagePathFromJArryField(visor, VisorFrontImgKey),
+                            GetImagePathFromJArryField(visor, VisorFrontImgKey, VisorDataFolder),
                         IdleFlipImagePath =
-                            GetImagePathFromJArryField(visor, VisorFrontFlipImgKey),
-                        IsBehindHat = visor.Value<bool>(VisorBehindHateKey),
-                        IsShader = visor.Value<bool>(VisorAdaptiveKey)
+                            GetImagePathFromJArryField(visor, VisorFrontFlipImgKey, VisorDataFolder),
+                        IsBehindHat = visor.TryGetValue(
+                            VisorBehindHateKey, out bool isVisorBound) && isVisorBound,
+                        IsShader = visor.TryGetValue(
+                            VisorAdaptiveKey, out bool isVisorShader) && isVisorShader,
                     }
                 );
             }
@@ -88,10 +91,10 @@ public sealed class MoreCosmicAnalyzer : IRepositoryAnalyzer
                 namePlateConverter.Add(
                     new ExtremeNamePlateConverter()
                     {
-                        Author = namePlate.Value<string>(VisorAuthorKey),
-                        Name = namePlate.Value<string>(VisorNameKey),
+                        Author = namePlate.Value<string>(NamePlateAuthorKey),
+                        Name = namePlate.Value<string>(NamePlateNameKey),
                         ImagePath =
-                            GetImagePathFromJArryField(namePlate, NamePlateImgKey),
+                            GetImagePathFromJArryField(namePlate, NamePlateImgKey, NamePlateDataFolder),
                     }
                 );
             }
@@ -111,12 +114,12 @@ public sealed class MoreCosmicAnalyzer : IRepositoryAnalyzer
         return File.Exists(jsonPath);
     }
 
-    private static string GetImagePathFromJArryField(JToken target, string arrayKey)
+    private string GetImagePathFromJArryField(JToken target, string arrayKey, string folder)
     {
         JArray arr = target.Value<JArray>(arrayKey);
         
         if (arr is null) { return string.Empty; }
 
-        return arr.Value<string>(ImgNameKey);
+        return Path.Combine(this.TargetPath, folder, arr.Value<string>(ImgNameKey));
     }
 }
