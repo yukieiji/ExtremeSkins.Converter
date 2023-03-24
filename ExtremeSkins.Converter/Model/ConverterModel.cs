@@ -60,12 +60,7 @@ internal class ConverterModel
             yield break;
         }
 
-        if (Directory.Exists(outputPath))
-        {
-            Directory.Delete(outputPath, true);
-        }
-
-        Directory.CreateDirectory(outputPath);
+        Utility.ForceRecreateFolder(outputPath);
 
         foreach (var converter in converterList)
         {
