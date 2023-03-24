@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 
+using LibGit2Sharp;
+
 using ExtremeSkins.Converter.Core.Analyzer.NebulaOnTheShip;
 using ExtremeSkins.Converter.Core.Analyzer.SuperNewRoles;
 using ExtremeSkins.Converter.Core.Analyzer.TheOtherRoles;
@@ -31,13 +33,20 @@ public static class RepositoryClassifier
         {
             try
             {
+                string[] splitedUrl = targetPath.Split('/');
                 string cloneTargetPath = Path.Combine(
-                    Directory.GetCurrentDirectory(), CloneFolder);
-                if (!Directory.Exists(cloneTargetPath))
+                    Directory.GetCurrentDirectory(), CloneFolder, splitedUrl[^1]);
+                if (Directory.Exists(cloneTargetPath))
                 {
-                    Directory.CreateDirectory(cloneTargetPath);
+                    DirectoryInfo di = new DirectoryInfo(cloneTargetPath);
+                    RemoveReadonlyAttribute(di);
+                    di.Delete(true);
                 }
-                targetPath = LibGit2Sharp.Repository.Clone(targetPath, cloneTargetPath);
+
+                Directory.CreateDirectory(cloneTargetPath);
+
+                string gitFolder = Repository.Clone(targetPath, cloneTargetPath);
+                targetPath = gitFolder.Substring(0, gitFolder.Length - 5);
             }
             catch
             {
@@ -62,5 +71,28 @@ public static class RepositoryClassifier
         }
 
         throw new Exception();
+    }
+
+    public static void RemoveReadonlyAttribute(DirectoryInfo dirInfo)
+    {
+        //基のフォルダの属性を変更
+        if ((dirInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+        {
+            dirInfo.Attributes = FileAttributes.Normal;
+        }
+        //フォルダ内のすべてのファイルの属性を変更
+        foreach (FileInfo fi in dirInfo.GetFiles())
+        {
+            if ((fi.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            {
+                fi.Attributes = FileAttributes.Normal;
+            }
+        }
+            
+        //サブフォルダの属性を回帰的に変更
+        foreach (DirectoryInfo di in dirInfo.GetDirectories())
+        {
+            RemoveReadonlyAttribute(di);
+        }
     }
 }
