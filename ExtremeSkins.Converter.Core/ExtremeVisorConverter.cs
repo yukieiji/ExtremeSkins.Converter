@@ -7,8 +7,8 @@ namespace ExtremeSkins.Converter.Core;
 
 public sealed class ExtremeHatConverter : ICosmicConverter
 {
-    public string Author { get; init; } = string.Empty;
-    public string Name   { get; init; } = string.Empty;
+    public string Author { get; set; } = string.Empty;
+    public string Name   { get; set; } = string.Empty;
 
     public string FrontImagePath     { get; init; } = string.Empty;
     public string FrontFlipImagePath { get; init; } = string.Empty;

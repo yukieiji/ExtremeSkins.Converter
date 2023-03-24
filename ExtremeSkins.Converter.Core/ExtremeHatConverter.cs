@@ -8,8 +8,8 @@ namespace ExtremeSkins.Converter.Core;
 public sealed class ExtremeVisorConverter : ICosmicConverter
 {
   
-    public string Author { get; init; } = string.Empty;
-    public string Name   { get; init; } = string.Empty;
+    public string Author { get; set; } = string.Empty;
+    public string Name   { get; set; } = string.Empty;
 
     public string IdleImagePath     { get; init; } = string.Empty;
     public string IdleFlipImagePath { get; init; } = string.Empty;
