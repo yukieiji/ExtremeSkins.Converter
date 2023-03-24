@@ -118,9 +118,9 @@ public sealed class MoreCosmicAnalyzer : IRepositoryAnalyzer
 
     private string GetImagePathFromJArryField(JToken target, string arrayKey, string folder)
     {
-        JArray arr = target.Value<JArray>(arrayKey);
+        JObject obj = target.Value<JObject>(arrayKey);
         
-        if (arr is null) { return string.Empty; }
+        if (obj is null) { return string.Empty; }
 
         return Path.Combine(this.TargetPath, folder, arr.Value<string>(ImgNameKey));
     }
