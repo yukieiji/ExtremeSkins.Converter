@@ -60,7 +60,7 @@ public class MainWindowViewModel : BindableBase
             var model = new Model.ConverterModel();
             foreach (string log in model.Convert(exportedDir, path))
             {
-                this.exportLog = $"{this.exportLog}\n{log}";
+                this.ExportLog = $"{this.exportLog}\n{log}";
             }
         }
         
