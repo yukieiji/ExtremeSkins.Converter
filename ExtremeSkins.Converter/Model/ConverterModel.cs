@@ -161,7 +161,10 @@ internal class ConverterModel
             yield break;
         }
 
-        Utility.ForceRecreateFolder(outputPath);
+        if (!Directory.Exists(outputPath))
+        {
+            Directory.CreateDirectory(outputPath);
+        }
 
         foreach (var converter in converterList)
         {
