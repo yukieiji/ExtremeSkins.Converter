@@ -201,8 +201,14 @@ internal class ConverterModel
         }
 
         bool isReplace = false;
-        char[] invalidch = Path.GetInvalidPathChars();
-        foreach (char c in invalidch)
+        char[] invalidFolderChar = Path.GetInvalidPathChars();
+        foreach (char c in invalidFolderChar)
+        {
+            isReplace = TryReplecString(ref replacedStr, c) || isReplace;
+        }
+
+        char[] invalidFileChar = Path.GetInvalidFileNameChars();
+        foreach (char c in invalidFileChar)
         {
             isReplace = TryReplecString(ref replacedStr, c) || isReplace;
         }
