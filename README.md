@@ -19,7 +19,7 @@
 [![Discord](https://img.shields.io/discord/994790791304200252?label=Discord)](https://t.co/czLmgXLUBU)
 
 # 使い方
-1. [ここ](https://github.com/yukieiji/ExtremeSkins.Converter/releases/latest)からExtremeSkins.Generatorの最新版をダウンロードする
+1. [ここ](https://github.com/yukieiji/ExtremeSkins.Converter/releases/latest)からExtremeSkins.Converterの最新版をダウンロードする
    - エディションの違い、よくわからないって方はAllinOneをダウンロードして下さい(LightとAllinOneで機能の違いはありません)
      - AllinOne : 容量は大きいが何もしなくてもそのまま利用可能
      - Light : 容量は小さいが別途.NET 6.0 Runtimeのインストールが必要になります
