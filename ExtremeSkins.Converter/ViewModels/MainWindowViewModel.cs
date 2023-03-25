@@ -58,7 +58,8 @@ public class MainWindowViewModel : BindableBase
         foreach (string path in this.TargetRepository)
         {
             var model = new Model.ConverterModel();
-            foreach (string log in model.Convert(exportedDir, path))
+            model.AddOutPutPath(exportedDir);
+            foreach (string log in model.Convert(path))
             {
                 this.ExportLog = $"{this.exportLog}\n{log}";
             }
