@@ -201,10 +201,10 @@ internal class ConverterModel
         char[] invalidch = Path.GetInvalidPathChars();
         foreach (char c in invalidch)
         {
-            isReplace = isReplace || TryReplecString(ref replacedStr, c);
+            isReplace = TryReplecString(ref replacedStr, c) || isReplace;
         }
-        isReplace = isReplace || TryReplecString(ref replacedStr, '.');
-        isReplace = isReplace || TryReplecString(ref replacedStr, ' ');
+        isReplace = TryReplecString(ref replacedStr, '.') || isReplace;
+        isReplace = TryReplecString(ref replacedStr, ' ') || isReplace;
 
         return !isAscii || isReplace;
     }
