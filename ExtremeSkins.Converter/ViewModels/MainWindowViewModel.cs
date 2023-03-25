@@ -3,6 +3,8 @@ using Prism.Commands;
 
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 using ExtremeSkins.Converter.Service;
 using ExtremeSkins.Converter.Service.Interface;
@@ -47,7 +49,7 @@ public class MainWindowViewModel : BindableBase
     }
     
 
-    private void Convert()
+    private async void Convert()
     {
         this.isConverting = true;
         UpdateButton();
@@ -55,19 +57,27 @@ public class MainWindowViewModel : BindableBase
         string curDirPath = Directory.GetCurrentDirectory();
         string exportedDir = Path.Combine(curDirPath, outputDir);
 
-        foreach (string path in this.TargetRepository)
-        {
-            var model = new Model.ConverterModel();
-            model.AddOutPutPath(exportedDir);
-            foreach (string log in model.Convert(path))
-            {
-                this.ExportLog = $"{this.exportLog}\n{log}";
-            }
-        }
+        await Task.Run(() => ExecuteBody(exportedDir));
         
         UpdateButton();
         this.TargetRepository.Clear();
         this.isConverting = false;
+    }
+
+    private void ExecuteBody(params string[] paths)
+    {
+        foreach (string repo in this.TargetRepository)
+        {
+            var model = new Model.ConverterModel();
+            foreach (string path in paths)
+            {
+                model.AddOutPutPath(path);
+            }
+            foreach (string log in model.Convert(repo))
+            {
+                this.ExportLog = $"{this.exportLog}\n{log}";
+            }
+        }
     }
 
     private bool IsExecuteConvert() => this.TargetRepository.Count > 0;
