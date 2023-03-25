@@ -20,6 +20,7 @@ public class MainWindowViewModel : BindableBase
     public DelegateCommand<string> SetRepositoryCommand { get; private set; }
     public DelegateCommand ConvertCommand { get; private set; }
     public DelegateCommand OpenExportedFolderCommand { get; private set; }
+    public DelegateCommand SetAmongUsPathCommand { get; private set; }
 
     public string ExportLog
     {
@@ -27,6 +28,13 @@ public class MainWindowViewModel : BindableBase
         set { SetProperty(ref exportLog, value); }
     }
     private string exportLog = string.Empty;
+
+    public string AmongUsPath
+    {
+        get { return amongUsPath; }
+        set { SetProperty(ref amongUsPath, value); }
+    }
+    private string amongUsPath = string.Empty;
 
     private readonly FolderSelectDialogService openFolderSelectDlgService;
     private readonly OpenExplorerService openExplorerService;
@@ -40,7 +48,10 @@ public class MainWindowViewModel : BindableBase
     {
         this.openFolderSelectDlgService = openFolderSelectService;
         this.openExplorerService = openExplorerService;
+
         this.SetRepositoryCommand = new DelegateCommand<string>(SetRepository, IsSetRepositoryCheck);
+        this.SetAmongUsPathCommand = new DelegateCommand(SetAmongUsPath, IsSetRepositoryCheck);
+
         this.ConvertCommand = new DelegateCommand(Convert, IsExecuteConvert);
         this.OpenExportedFolderCommand = new DelegateCommand(OpenExportedFolder);
         this.TargetRepository = new ObservableCollection<string>();
@@ -59,7 +70,7 @@ public class MainWindowViewModel : BindableBase
         string curDirPath = Directory.GetCurrentDirectory();
         string exportedDir = Path.Combine(curDirPath, outputDir);
 
-        await Task.Run(() => ExecuteBody(exportedDir));
+        await Task.Run(() => ExecuteBody(exportedDir, this.amongUsPath));
         
         UpdateButton();
         this.TargetRepository.Clear();
@@ -73,6 +84,7 @@ public class MainWindowViewModel : BindableBase
             var model = new Model.ConverterModel();
             foreach (string path in paths)
             {
+                if (string.IsNullOrEmpty(path)) { continue; }
                 model.AddOutPutPath(path);
             }
             foreach (string log in model.Convert(repo))
@@ -85,6 +97,7 @@ public class MainWindowViewModel : BindableBase
     private bool IsExecuteConvert() => this.TargetRepository.Count > 0 && !this.isConverting;
 
     private bool IsSetRepositoryCheck(string _) => !this.isConverting;
+    private bool IsSetRepositoryCheck() => !this.isConverting;
 
     private void OpenExportedFolder()
     {
@@ -102,6 +115,19 @@ public class MainWindowViewModel : BindableBase
         });
     }
 
+    private void SetAmongUsPath()
+    {
+        var result = openFolderSelectDlgService.Show(
+            new FolderSelectDialogService.Setting()
+            {
+                Tilte = "AmongUsのフォルダを選択して下さい"
+            });
+
+        if (result.State != IOokiiDialogResult.ShowState.Ok) { return; }
+
+        this.AmongUsPath = result.FolderPath;
+    }
+
     private void SetRepository(string type)
     {
         string addRepo;
@@ -111,7 +137,7 @@ public class MainWindowViewModel : BindableBase
                 var result = openFolderSelectDlgService.Show(
                     new FolderSelectDialogService.Setting()
                     {
-                        Tilte = "SelectRepositoryFolder"
+                        Tilte = "リポジトリのフォルダを選択して下さい"
                     });
 
                 if (result.State != IOokiiDialogResult.ShowState.Ok) { return; }
