@@ -18,6 +18,9 @@ public sealed class ExtremeNamePlateConverter : ICosmicConverter
         string outputDir = Path.GetDirectoryName(outputPath);
 
         Utility.ForceRecreateFolder(outputDir);
+
+        if (!File.Exists(ImagePath)) { return; }
+        
         File.Copy(ImagePath, outputPath);
     }
 }

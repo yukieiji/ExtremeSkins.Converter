@@ -39,7 +39,7 @@ public sealed class SuperNewNamePlatesAnalyzer : IRepositoryAnalyzer
         List<ExtremeVisorConverter> visorConverter = new List<ExtremeVisorConverter>();
         if (File.Exists(visorJsonPath))
         {
-            using StreamReader visorJsonReader = File.OpenText(Path.Combine(TargetPath, VisorDataJson));
+            using StreamReader visorJsonReader = File.OpenText(visorJsonPath);
             JObject visorJson = JObject.Load(new JsonTextReader(visorJsonReader));
 
             if (visorJson.TryGetValue(VisorDataBodyKey, out JToken visorToken) &&
@@ -52,7 +52,7 @@ public sealed class SuperNewNamePlatesAnalyzer : IRepositoryAnalyzer
                         {
                             Author = visor.Value<string>(VisorAuthorKey),
                             Name = visor.Value<string>(VisorNameKey),
-                            IdleImagePath = visor.GetStringValue(VisorImgKey),
+                            IdleImagePath = GetImagePath(visor, VisorImgKey, VisorDataFolder),
                             IdleFlipImagePath = string.Empty,
                             IsBehindHat = false,
                             IsShader = false
@@ -79,8 +79,7 @@ public sealed class SuperNewNamePlatesAnalyzer : IRepositoryAnalyzer
                         {
                             Author = namePlate.Value<string>(VisorAuthorKey),
                             Name = namePlate.Value<string>(VisorNameKey),
-                            ImagePath =
-                                GetImagePathFromJArryField(namePlate, NamePlateImgKey),
+                            ImagePath = GetImagePath(namePlate, NamePlateImgKey, NamePlateDataFolder),
                         }
                     );
                 }
@@ -106,10 +105,12 @@ public sealed class SuperNewNamePlatesAnalyzer : IRepositoryAnalyzer
             File.Exists(namePlateJsonPath);
     }
 
-    private static string GetImagePathFromJArryField(JToken target, string arrayKey)
+    private string GetImagePath(JToken token, string key, string folder)
     {
-        string value = target.Value<string>(arrayKey);
+        string value = token.GetStringValue(key);
 
-        return string.IsNullOrEmpty(value) ? string.Empty : value;
+        if (string.IsNullOrEmpty(value)) { return string.Empty; }
+
+        return Path.Combine(this.TargetPath, folder, value);
     }
 }
