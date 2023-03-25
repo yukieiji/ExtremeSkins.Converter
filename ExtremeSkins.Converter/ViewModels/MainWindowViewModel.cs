@@ -82,7 +82,7 @@ public class MainWindowViewModel : BindableBase
         }
     }
 
-    private bool IsExecuteConvert() => this.TargetRepository.Count > 0;
+    private bool IsExecuteConvert() => this.TargetRepository.Count > 0 && !this.isConverting;
 
     private bool IsSetRepositoryCheck(string _) => !this.isConverting;
 
