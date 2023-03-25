@@ -3,7 +3,6 @@ using Prism.Commands;
 
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 using ExtremeSkins.Converter.Service;
@@ -77,16 +76,15 @@ public class MainWindowViewModel : BindableBase
         this.isConverting = false;
     }
 
-    private void ExecuteBody(params string[] paths)
+    private void ExecuteBody(string path, string amongUsPath)
     {
         foreach (string repo in this.TargetRepository)
         {
             var model = new Model.ConverterModel();
-            foreach (string path in paths)
-            {
-                if (string.IsNullOrEmpty(path)) { continue; }
-                model.AddOutPutPath(path);
-            }
+            
+            model.AddOutPutPath(path);
+            model.AmongUsPath = amongUsPath;
+
             foreach (string log in model.Convert(repo))
             {
                 this.ExportLog = $"{this.exportLog}\n{log}";

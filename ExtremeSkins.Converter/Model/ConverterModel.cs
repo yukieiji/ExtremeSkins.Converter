@@ -20,7 +20,17 @@ namespace ExtremeSkins.Converter.Model;
 internal class ConverterModel
 {
     public string Locale { get; set; } = "ja-JP";
-
+    public string AmongUsPath
+    { 
+        get => this.amongUsPath; 
+        set
+        {
+            this.amongUsPath = value;
+            this.path.Add(value);
+        }
+    }
+    private string amongUsPath = string.Empty;
+    
     private List<string> path = new List<string>();
     private Dictionary<string, string> transData = new Dictionary<string, string>();
 
@@ -73,6 +83,12 @@ internal class ConverterModel
         {
             yield return log;
         }
+
+        if (!string.IsNullOrEmpty(this.amongUsPath))
+        {
+            CreatorMode.SetCreatorMode(this.amongUsPath, true);
+        }
+
         yield return $" ---- END ----";
     }
 
