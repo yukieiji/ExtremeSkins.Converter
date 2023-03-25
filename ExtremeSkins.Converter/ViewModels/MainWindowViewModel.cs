@@ -53,6 +53,8 @@ public class MainWindowViewModel : BindableBase
     {
         this.isConverting = true;
         UpdateButton();
+        
+        this.ExportLog = $"{this.exportLog}\n・Initializing.....";
 
         string curDirPath = Directory.GetCurrentDirectory();
         string exportedDir = Path.Combine(curDirPath, outputDir);
