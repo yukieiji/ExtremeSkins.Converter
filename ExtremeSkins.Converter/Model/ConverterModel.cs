@@ -94,9 +94,11 @@ internal class ConverterModel
 
     private IEnumerable<string> Execute(string repoName, AnalyzeResult result)
     {
-        foreach (string outputPath in this.path)
+        foreach (var (outputPath, index) in this.path.Select((item, index) => (item, index)))
         {
-            foreach (string log in ConvertTargetPath(outputPath, repoName, result))
+            foreach (string log in ConvertTargetPath(
+                outputPath, repoName,
+                result, index == 0))
             {
                 yield return log;
             }
@@ -107,23 +109,23 @@ internal class ConverterModel
     }
 
     private IEnumerable<string> ConvertTargetPath(
-        string targetPath, string analyzerName, AnalyzeResult result)
+        string targetPath, string analyzerName, AnalyzeResult result, bool isClean)
     {
         foreach (string log in ExecuteConvert(
             Path.Combine(targetPath, ExtremeHatDataStruct.FolderName),
-            analyzerName, result.Hat))
+            analyzerName, result.Hat, isClean))
         {
             yield return log;
         }
         foreach (string log in ExecuteConvert(
             Path.Combine(targetPath, ExtremeVisorDataStruct.FolderName),
-            analyzerName, result.Visor))
+            analyzerName, result.Visor, isClean))
         {
             yield return log;
         }
         foreach (string log in ExecuteConvert(
             Path.Combine(targetPath, ExtremeNamePlateDataStruct.FolderName),
-            analyzerName, result.NamePlate))
+            analyzerName, result.NamePlate, isClean))
         {
             yield return log;
         }
@@ -169,7 +171,7 @@ internal class ConverterModel
     }
 
     private IEnumerable<string> ExecuteConvert<T>(
-        string outputPath, string analyzerName, List<T> converterList) 
+        string outputPath, string analyzerName, List<T> converterList, bool isClean) 
         where T : ICosmicConverter
     {
         if (converterList.Count <= 0)
@@ -186,22 +188,25 @@ internal class ConverterModel
         {
             yield return $"--- Converting.... Auther:{converter.Author} Name:{converter.Name}  ---";
 
-            string autherName = converter.Author;
-            string conflictFixAutherName =
-                TryClean(autherName, out string asciiedAutherName) ?
-                $"{analyzerName}_{asciiedAutherName}" :
-                $"{analyzerName}_{autherName}";
-            this.transData[conflictFixAutherName] = autherName;
+            if (isClean)
+            {
+                string autherName = converter.Author;
+                string conflictFixAutherName =
+                    TryClean(autherName, out string asciiedAutherName) ?
+                    $"{analyzerName}_{asciiedAutherName}" :
+                    $"{analyzerName}_{autherName}";
+                this.transData[conflictFixAutherName] = autherName;
 
-            string skinName = converter.Name;
-            string conflictFixSkinName =
-                TryClean(skinName, out string asciiedSkinName) ?
-                $"{analyzerName}_{asciiedSkinName}" :
-                $"{analyzerName}_{skinName}";
-            this.transData[conflictFixSkinName] = skinName;
+                string skinName = converter.Name;
+                string conflictFixSkinName =
+                    TryClean(skinName, out string asciiedSkinName) ?
+                    $"{analyzerName}_{asciiedSkinName}" :
+                    $"{analyzerName}_{skinName}";
+                this.transData[conflictFixSkinName] = skinName;
 
-            converter.Name = conflictFixSkinName;
-            converter.Author = conflictFixAutherName;
+                converter.Name = conflictFixSkinName;
+                converter.Author = conflictFixAutherName;
+            }
 
             converter.Convert(outputPath);
         }
