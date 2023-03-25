@@ -181,6 +181,9 @@ internal class ConverterModel
                 $"{analyzerName}_{skinName}";
             this.transData[conflictFixSkinName] = skinName;
 
+            converter.Name = conflictFixSkinName;
+            converter.Author = conflictFixAutherName;
+
             converter.Convert(outputPath);
         }
     }
@@ -195,16 +198,26 @@ internal class ConverterModel
         }
 
         bool isReplace = false;
-        char[] invalidch = Path.GetInvalidFileNameChars();
+        char[] invalidch = Path.GetInvalidPathChars();
         foreach (char c in invalidch)
         {
-            if (replacedStr.Contains(c))
-            {
-                isReplace = true;
-                replacedStr = replacedStr.Replace(c.ToString(), "");
-            }
+            isReplace = isReplace || TryReplecString(ref replacedStr, c);
         }
+        isReplace = isReplace || TryReplecString(ref replacedStr, '.');
+        isReplace = isReplace || TryReplecString(ref replacedStr, ' ');
 
         return !isAscii || isReplace;
+    }
+
+    private static bool TryReplecString(ref string replacedStr, char c)
+    {
+        bool isReplace = false;
+        if (replacedStr.Contains(c))
+        {
+            isReplace = true;
+            replacedStr = replacedStr.Replace(c.ToString(), "");
+        }
+
+        return isReplace;
     }
 }
