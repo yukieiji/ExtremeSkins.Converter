@@ -1,5 +1,6 @@
 ﻿using System.IO;
 
+using ExtremeSkins.Core;
 using ExtremeSkins.Core.ExtremeVisor;
 using ExtremeSkins.Converter.Core.Interface;
 
@@ -36,7 +37,7 @@ public sealed class ExtremeVisorConverter : ICosmicConverter
             LeftIdle: hasFlip,
             BehindHat: IsBehindHat);
 
-        info.ExportToJson(outputPath);
+        InfoBase.ExportToJson(info, outputPath);
     }
 
     private static bool TryCopyFile(string outputFile, string targetFile)
