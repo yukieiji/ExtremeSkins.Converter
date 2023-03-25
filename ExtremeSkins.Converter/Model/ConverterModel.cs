@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 
+using AnyAscii;
+
+using ExtremeSkins.Core;
 using ExtremeSkins.Converter.Core;
 using ExtremeSkins.Converter.Core.Analyzer;
 using ExtremeSkins.Converter.Core.Interface;
@@ -8,14 +13,46 @@ using ExtremeSkins.Converter.Core.Interface;
 using ExtremeHatDataStruct = ExtremeSkins.Core.ExtremeHats.DataStructure;
 using ExtremeVisorDataStruct = ExtremeSkins.Core.ExtremeVisor.DataStructure;
 using ExtremeNamePlateDataStruct = ExtremeSkins.Core.ExtremeNamePlate.DataStructure;
+using SupportedLangs = ExtremeSkins.Core.CreatorMode.SupportedLangs;
 
 namespace ExtremeSkins.Converter.Model;
 
 internal class ConverterModel
 {
-    public IEnumerable<string> Convert(
-        string outPath, string targetRepo)
+    public string Locale { get; set; } = "ja-JP";
+
+    private List<string> path = new List<string>();
+    private Dictionary<string, string> transData = new Dictionary<string, string>();
+
+    private static Dictionary<SupportedLangs, string> supportLnag = new Dictionary<SupportedLangs, string>()
     {
+        {SupportedLangs.English   , ""},
+        {SupportedLangs.Latam     , ""},
+        {SupportedLangs.Brazilian , ""},
+        {SupportedLangs.Portuguese, ""},
+        {SupportedLangs.Korean    , ""},
+        {SupportedLangs.Russian   , ""},
+        {SupportedLangs.Dutch     , ""},
+        {SupportedLangs.Filipino  , ""},
+        {SupportedLangs.French    , ""},
+        {SupportedLangs.German    , ""},
+        {SupportedLangs.Italian   , ""},
+        {SupportedLangs.Japanese  , "ja-JP"},
+        {SupportedLangs.Spanish   , ""},
+        {SupportedLangs.SChinese  , ""},
+        {SupportedLangs.TChinese  , ""},
+        {SupportedLangs.Irish     , ""},
+    };
+
+    public void AddOutPutPath(string outPath)
+    {
+        this.path.Add(outPath);
+    }
+
+    public IEnumerable<string> Convert(string targetRepo)
+    {
+        this.transData.Clear();
+
         IRepositoryAnalyzer analyzer;
 
         try
@@ -27,32 +64,96 @@ internal class ConverterModel
             yield break;
         }
 
-        yield return $" ---- {analyzer.Name} Analyze Start!!  Path{targetRepo} ----";
+        string repoName = analyzer.Name;
+        yield return $" ---- {repoName} Analyze Start!!  Path{targetRepo} ----";
 
         AnalyzeResult result = analyzer.Analyze();
 
-        foreach (string log in ExecuteConvert(
-            Path.Combine(outPath, ExtremeHatDataStruct.FolderName), result.Hat))
+        foreach (string log in Execute(repoName, result))
         {
             yield return log;
         }
-
-        foreach (string log in ExecuteConvert(
-            Path.Combine(outPath, ExtremeVisorDataStruct.FolderName), result.Visor))
-        {
-            yield return log;
-        }
-
-        foreach (string log in ExecuteConvert(
-            Path.Combine(outPath, ExtremeNamePlateDataStruct.FolderName), result.NamePlate))
-        {
-            yield return log;
-        }
-
         yield return $" ---- END ----";
     }
 
-    private IEnumerable<string> ExecuteConvert<T>(string outputPath, List<T> converterList) 
+    private IEnumerable<string> Execute(string repoName, AnalyzeResult result)
+    {
+        foreach (string outputPath in this.path)
+        {
+            foreach (string log in ConvertTargetPath(outputPath, repoName, result))
+            {
+                yield return log;
+            }
+            yield return $" ---- Exporting Translation.... ----";
+            ExportTranslationCsv(outputPath);
+            yield return $" ---- Exporting Translation End ----";
+        }
+    }
+
+    private IEnumerable<string> ConvertTargetPath(
+        string targetPath, string analyzerName, AnalyzeResult result)
+    {
+        foreach (string log in ExecuteConvert(
+            Path.Combine(targetPath, ExtremeHatDataStruct.FolderName),
+            analyzerName, result.Hat))
+        {
+            yield return log;
+        }
+        foreach (string log in ExecuteConvert(
+            Path.Combine(targetPath, ExtremeVisorDataStruct.FolderName),
+            analyzerName, result.Visor))
+        {
+            yield return log;
+        }
+        foreach (string log in ExecuteConvert(
+            Path.Combine(targetPath, ExtremeNamePlateDataStruct.FolderName),
+            analyzerName, result.NamePlate))
+        {
+            yield return log;
+        }
+    }
+
+    private void ExportTranslationCsv(string outPath)
+    {
+        List<string> writeStr = new List<string>();
+        if (CreatorMode.IsExistTransFile(outPath))
+        {
+            using (StreamReader csv = CreatorMode.GetTranslationReader(outPath))
+            {
+                csv.ReadLine();
+                while (!csv.EndOfStream)
+                {
+                    string line = csv.ReadLine();
+                    if (!this.transData.Keys.Any(line.StartsWith))
+                    {
+                        writeStr.Add(csv.ReadLine());
+                    }
+                }
+            }
+        }
+
+        foreach (var (transKey, trans) in this.transData)
+        {
+            StringBuilder builder = new StringBuilder(13);
+            builder.Append(transKey).Append(CreatorMode.Comma);
+
+            foreach (var local in supportLnag.Values)
+            {
+                builder.Append(
+                    local == this.Locale ? trans : string.Empty).Append(CreatorMode.Comma);
+            }
+            writeStr.Add(builder.ToString());
+        }
+
+        using StreamWriter newCsv = CreatorMode.CreateTranslationWriter(outPath);
+        foreach (string line in writeStr)
+        {
+            newCsv.WriteLine(line);
+        }
+    }
+
+    private IEnumerable<string> ExecuteConvert<T>(
+        string outputPath, string analyzerName, List<T> converterList) 
         where T : ICosmicConverter
     {
         if (converterList.Count <= 0)
@@ -64,8 +165,46 @@ internal class ConverterModel
 
         foreach (var converter in converterList)
         {
-            yield return $"--- Converting.... Auther:{converter.Name} Name:{converter.Name}  ---";
+            yield return $"--- Converting.... Auther:{converter.Author} Name:{converter.Name}  ---";
+
+            string autherName = converter.Author;
+            string conflictFixAutherName =
+                TryClean(autherName, out string asciiedAutherName) ?
+                $"{analyzerName}_{asciiedAutherName}" :
+                $"{analyzerName}_{autherName}";
+            this.transData[conflictFixAutherName] = autherName;
+
+            string skinName = converter.Name;
+            string conflictFixSkinName =
+                TryClean(skinName, out string asciiedSkinName) ?
+                $"{analyzerName}_{asciiedSkinName}" :
+                $"{analyzerName}_{skinName}";
+            this.transData[conflictFixSkinName] = skinName;
+
             converter.Convert(outputPath);
         }
+    }
+
+    private static bool TryClean(string checkStr, out string replacedStr)
+    {
+        replacedStr = checkStr;
+        bool isAscii = checkStr.IsAscii();
+        if (!isAscii)
+        {
+            replacedStr = checkStr.Transliterate();
+        }
+
+        bool isReplace = false;
+        char[] invalidch = Path.GetInvalidFileNameChars();
+        foreach (char c in invalidch)
+        {
+            if (replacedStr.Contains(c))
+            {
+                isReplace = true;
+                replacedStr = replacedStr.Replace(c.ToString(), "");
+            }
+        }
+
+        return !isAscii || isReplace;
     }
 }
