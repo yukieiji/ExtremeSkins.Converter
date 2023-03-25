@@ -24,12 +24,19 @@ public static class Utility
             dirInfo.Attributes = FileAttributes.Normal;
         }
         //フォルダ内のすべてのファイルの属性を変更
-        foreach (FileInfo fi in dirInfo.GetFiles())
+        try
         {
-            if ((fi.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            foreach (FileInfo fi in dirInfo.EnumerateFiles())
             {
-                fi.Attributes = FileAttributes.Normal;
+                if ((fi.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                {
+                    fi.Attributes = FileAttributes.Normal;
+                }
             }
+        }
+        catch
+        {
+            return;
         }
 
         //サブフォルダの属性を回帰的に変更
