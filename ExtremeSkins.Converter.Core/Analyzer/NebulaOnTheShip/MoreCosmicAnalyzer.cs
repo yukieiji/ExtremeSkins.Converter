@@ -122,6 +122,9 @@ public sealed class MoreCosmicAnalyzer : IRepositoryAnalyzer
         
         if (obj is null) { return string.Empty; }
 
-        return Path.Combine(this.TargetPath, folder, obj.Value<string>(ImgNameKey));
+        string imgName = obj.Value<string>(ImgNameKey);
+        if (imgName == IgnoreImgName) { return string.Empty; }
+
+        return Path.Combine(this.TargetPath, folder, imgName);
     }
 }
