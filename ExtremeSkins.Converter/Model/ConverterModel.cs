@@ -65,7 +65,7 @@ internal class ConverterModel
         }
 
         string repoName = analyzer.Name;
-        yield return $" ---- {repoName} Analyze Start!!  Path{targetRepo} ----";
+        yield return $" ---- {repoName} Analyze Start!!  Path:{targetRepo} ----";
 
         AnalyzeResult result = analyzer.Analyze();
 
