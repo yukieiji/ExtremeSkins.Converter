@@ -22,7 +22,7 @@ public sealed class ExtremeHatConverter : ICosmicConverter
     public void Convert(string targetPath)
     {
         string outputPath = DataStructure.GetHatPath(targetPath, Name);
-        Utility.ForceRecreateFolder(targetPath);
+        Utility.ForceRecreateFolder(outputPath);
 
         TryCopyFile(Path.Combine(
             outputPath, DataStructure.FrontImageName), FrontImagePath);

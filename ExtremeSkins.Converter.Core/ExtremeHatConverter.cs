@@ -20,7 +20,7 @@ public sealed class ExtremeVisorConverter : ICosmicConverter
     public void Convert(string targetPath)
     {
         string outputPath = DataStructure.GetVisorPath(targetPath, Name);
-        Utility.ForceRecreateFolder(targetPath);
+        Utility.ForceRecreateFolder(outputPath);
 
         TryCopyFile(Path.Combine(
             outputPath, DataStructure.IdleImageName), IdleImagePath);
