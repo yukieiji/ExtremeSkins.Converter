@@ -146,7 +146,7 @@ public class MainWindowViewModel : BindableBase
                 break;
             case "url":
                 string url = Microsoft.VisualBasic.Interaction.InputBox(
-                    "setUrl", "setUrl");
+                    "リポジトリのURLを入力して下さい", "URLを入力");
                 if (string.IsNullOrEmpty(url)) { return; }
                 addRepo = url;
                 break;
