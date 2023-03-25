@@ -56,7 +56,7 @@ public sealed class ExtremeHatConverter : ICosmicConverter
 
     private static bool TryCopyFile(string outputFile, string targetFile)
     {
-        if (!string.IsNullOrEmpty(targetFile))
+        if (!string.IsNullOrEmpty(targetFile) && File.Exists(targetFile))
         {
             File.Copy(targetFile, outputFile);
             return true;
