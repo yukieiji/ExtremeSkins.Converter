@@ -4,6 +4,7 @@
     <LangVersion>latest</LangVersion>
     <WarningLevel>7</WarningLevel>
     <TargetFramework>net6.0-windows</TargetFramework>
+    <VersionPrefix>1.0.0</VersionPrefix>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
