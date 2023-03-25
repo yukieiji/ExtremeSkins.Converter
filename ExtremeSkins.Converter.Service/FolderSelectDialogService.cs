@@ -9,7 +9,7 @@ public sealed class FolderSelectDialogService : IOokiiDialogService<
     public sealed class Setting : IOokiiDialogSetting
     {
         public string Tilte { get; set; } = string.Empty;
-        public bool Multiselect     { get; set; } = false;
+        public bool Multiselect { get; set; } = false;
         public bool ShowNewFolderButton { get; set; } = false;
 
     }
